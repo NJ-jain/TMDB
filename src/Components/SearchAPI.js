@@ -1,0 +1,145 @@
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Link } from "react-router-dom";
+import "../public/welcome.css"
+// import { UseParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+
+const SearchAPI = () => {
+  
+  const [movies, setMovies] = useState([]);
+  const [page, setpage] = useState(1);
+  const { query } = useParams();
+  
+ 
+  const getPopular = async (page) => {
+    try {
+      const { data } = await axios.get(
+        `https://api.themoviedb.org/3/search/multi?api_key=223667d1239871fc4b6eeef8d0d6def8&language=en-US&query=${query}&page=${page}&include_adult=false`
+      );
+ 
+      //   console.log(data, "test");
+      setMovies([...movies, ...data.results]);
+      //   setMovies((data) => {
+      //     const updatedList = [...data];
+      //     return updatedList;
+      //   });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+ 
+  //   fetchData = (page) => {
+  //     const newItems = [];
+  //     for (let i = 0; i < 100; i++) {
+  //       newItems.push(i);
+  //     }
+  //     if (page === 100) {
+  //       setMovies({ hasMore: false });
+  //     }
+  //     setMovies({ items: [...movies.items, ...newItems] });
+  //   };
+  const getNext = () => {
+    //     setTimeout(() => {
+    setpage(page + 1);
+    //     }, []);
+  };
+ 
+  useEffect(() => {
+    getPopular(page);
+  }, [page]);
+ 
+  const imageid = `https://image.tmdb.org/t/p/w500`;
+ 
+  console.log(movies, "test");
+ 
+  return (
+    <div style={{ minHeight: "100vh", overflow: "auto" , width : "100%"  }}>
+    <h4  style={{ marginLeft: "5%", marginTop: "3%" ,fontSize : "2.5rem" }}>
+       Result for {query}
+    </h4>
+    <ul
+      type="none"
+      className="d-flex "
+      id="list"
+      style={{
+          display  : "flex" ,
+        position: "relative",
+        flexWrap: "no-wrap",
+        WebkitScrollbar: "none",
+        marginTop: "30px",
+        width : "100%",
+        minHeight : "100vh"
+      //   overflow : "auto"
+      }}
+    >
+      <InfiniteScroll 
+        dataLength={movies.length} //This is important field to render the next data
+        next={getNext}
+        hasMore={true}
+        loader={<h4>Loading...</h4>}
+        endMessage={
+          <p style={{ textAlign: "center" }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+        // below props only if you need pull down functionality
+        //   refreshFunction={this.refresh}
+        //   pullDownToRefresh
+        //   pullDownToRefreshThreshold={50}
+        pullDownToRefreshContent={
+          <h3 style={{ textAlign: "center" }}>
+            &#8595; Pull down to refresh
+          </h3>
+        }
+        releaseToRefreshContent={
+          <h3 style={{ textAlign: "center" }}>&#8593; Release to refresh</h3>
+        }
+      >
+        {movies &&
+          movies.map((m) => (
+              <li key={m.id}>
+              <Link to={`/details/movie/${m.id}`}  style={{textDecoration : "none" , color : "black"}}>
+              <div className="card" style={{ width: "150px", position : "relative" , minHeight: "300px" , marginLeft : "30px" , cursor : "pointer" }}>
+                <img
+                  style={{ width: "100%", height: "200px", objectFit: "cover" , borderRadius : "20px" }}
+                  src={imageid + m.poster_path}
+                  className="card-img-top"
+                  alt="..."
+                />
+                      
+                    <br /> 
+                <div className="card-body">
+                     <svg viewBox="0 0 36 36" style={{width : "50px" , marginTop : "-4rem" , marginLeft :"0rem" }} className="circular-chart orange">
+                      <path
+                          className="circle-bg"
+                          d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <path
+                          className="circle"
+                          strokeDasharray= {parseInt(m.vote_average * 10)} 
+                          d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <text x="18" y="20.35" className="percentage">
+                          {parseInt(m.vote_average * 10)}%
+                      </text>
+                      </svg>
+                  {/* <p className="card-text" style={{fontFamily : "Gilroy" , FontSize : "5px" , wordSpacing : "1px"}}>{m.title}</p> */}
+                  <p className="card-text">{m.media_type === "tv" ? m.name : m.title}</p>
+
+                </div>
+              </div>
+              </Link>
+            </li>
+          ))}
+      </InfiniteScroll>
+    </ul>
+  </div>
+  )
+}
+export default SearchAPI

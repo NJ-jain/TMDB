@@ -1,0 +1,37 @@
+{
+    "short_name": "TMDB App",
+    "name": "Progressive Web App React",
+    "icons": [
+        {
+            "src": "icons8-scream-32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "icons8-scream-64.png",
+            "type": "image/png",
+            "sizes": "64x64"
+        },
+        {
+            "src": "icons8-scream-100.png",
+            "type": "image/png",
+            "sizes": "100x100"
+        },
+        {
+            "src": "icons8-scream-128.png",
+            "type": "image/png",
+            "sizes": "128x128"
+        },
+        {
+            "src": "/icons8-scream-pastel-144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "density": "3.0"
+           }
+        
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff"
+}
